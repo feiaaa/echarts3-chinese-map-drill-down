@@ -41,6 +41,17 @@ var provinces = {
     "香港": "xianggang",
     "澳门": "aomen"
 };
+// 数据
+var red1=[{name:'安徽',value:8},{name:'北京',value:4},{name:'福建',value:10},{name:'甘肃',value:2},
+    {name:'广东',value:24},{name:'广西',value:5},
+    {name:'广州市',value:4,sub:2},{name:'深圳市',value:4,sub:2},{name:'佛山市',value:3,sub:2},{name:'中山市',value:3,sub:2},
+    {name:'汕头市',value:2,sub:2},{name:'湛江市',value:1,sub:2},{name:'江门市',value:1,sub:2},{name:'东莞市',value:2,sub:2},
+    {name:'珠海市',value:2,sub:2},{name:'茂名市',value:1,sub:2},{name:'梅州市',value:1,sub:2}
+]
+var redColor=['#D9D9D9','#F3BCC6','#E8534D','#B63032']//['#B63032','#E8534D','#F3BCC6','#D9D9D9'];
+var piecesProvince=[{gte: 25, lte: 33},{gte: 17, lte: 24},{gte: 9, lte: 16},{gte: 1, lte: 8}]
+var piecesCity=[{gte: 4, lte: 4},{gte: 3, lte: 3},{gte: 2, lte: 2},{gte: 1, lte: 1}]
+
 
 //直辖市和特别行政区-只有二级地图，没有三级地图
 var special = ["北京","天津","上海","重庆","香港","澳门"];
@@ -66,6 +77,7 @@ chart.on('click', function (params) {
 	if( params.name in provinces ){
 		//如果点击的是34个省、市、自治区，绘制选中地区的二级地图
 		$.getJSON('static/map/province/'+ provinces[params.name] +'.json', function(data){
+		    console.log(data,'=data =69')
 			echarts.registerMap( params.name, data);
 			var d = [];
 			for( var i=0;i<data.features.length;i++ ){
@@ -120,7 +132,7 @@ var option = {
     },
     tooltip: {
         trigger: 'item',
-        formatter: '{b}'
+        formatter: '{b}:{c}'
     },
     toolbox: {
         show: true,
@@ -140,10 +152,23 @@ var option = {
     },
     animationDuration:1000,
 	animationEasing:'cubicOut',
-	animationDurationUpdate:1000
+	animationDurationUpdate:1000,
+    visualMap: {
+        pieces:piecesProvince,
+        right: '20',
+        top: 'bottom',
+        text: ['高', '低'],
+        calculable: false,
+        orient: 'vertical',
+        type: 'piecewise' ,
+        inRange: {
+            color: redColor,
+        },
+    },
      
 };
 function renderMap(map,data){
+    console.log(data,'=data in =161')
 	option.title.subtext = map;
     option.series = [ 
 		{
@@ -179,7 +204,11 @@ function renderMap(map,data){
 	                areaColor: 'darkorange'
 	            }
 	        },
-            data:data
+            data:data.map(el=>{
+                const r=red1.find(v=>v.name===el.name)
+                console.log(r,'=r209')
+                return {...el,...r}
+            })
         }	
     ];
     //渲染地图
