@@ -851,13 +851,15 @@ chart.on('click', function (params) {
 			renderMap(params.name,d);
 		});
 	}else if( params.seriesName in provinces ){
-        option.visualMap.inRange.color=purpleCityColor;
-        option.visualMap.pieces=purpleCity;
 		//如果是【直辖市/】只有二级下钻
 		if(  special.indexOf( params.seriesName ) >=0  ){
+            option.visualMap.inRange.color=purpleProvinceColor;
+            option.visualMap.pieces=purplePiecesProvince;
 			renderMap('china',mapdata);
 		}else{
 			//显示县级地图
+            option.visualMap.inRange.color=purpleCityColor;
+            option.visualMap.pieces=purpleCity;
 			$.getJSON('static/map/city/'+ cityMap[params.name] +'.json', function(data){
 				echarts.registerMap( params.name, data);
 				var d = [];
@@ -882,7 +884,7 @@ var option = {
     title : {
         text: '药企咨询热力图',
         // subtext: '三级下钻',
-        link:'http://www.ldsun.com',
+        // link:'http://www.ldsun.com',
         left: 'center',
         textStyle:{
             color: '#fff',
